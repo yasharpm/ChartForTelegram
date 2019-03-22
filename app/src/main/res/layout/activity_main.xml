@@ -2,31 +2,103 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
 
-    android:background="#fff">
+    android:background="@color/light_background">
 
-    <com.yashoid.chartfortelegram.ChartView
-        android:id="@+id/chart_main"
+    <FrameLayout
+        android:id="@+id/toolbar"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1"
+        android:layout_height="56dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="16dp"
-        android:background="#001d2733"/>
+
+        android:background="@color/light_toolbar"
+        android:elevation="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="16dp"
+
+            android:textColor="@color/toolbar_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="Statistics"/>
+        
+        <ImageView
+            android:id="@+id/button_lightmode"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+
+            android:padding="6dp"
+            android:src="@drawable/ic_lightmode"
+            android:scaleType="centerInside"
+            android:tint="@color/toolbar_content"
+            android:tintMode="src_in"/>
+
+    </FrameLayout>
+
+    <View
+        android:id="@+id/body"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintBottom_toBottomOf="@+id/choices"
+
+        android:background="@color/light_body_background"
+        android:elevation="2dp"/>
+
+    <TextView
+        android:id="@+id/text_followers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/light_title"
+        android:text="Followers"
+        android:elevation="2dp"/>
+
+    <com.yashoid.chartfortelegram.MainChartView
+        android:id="@+id/chart_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_followers"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+
+        android:elevation="2dp"/>
     
-    <com.yashoid.chartfortelegram.ChartView
+    <com.yashoid.chartfortelegram.SimpleChartView
         android:id="@+id/chart_map"
         android:layout_width="0dp"
-        android:layout_height="72dp"
+        android:layout_height="48dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chart_main"
-        android:layout_marginTop="24dp"/>
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+
+        android:elevation="2dp"/>
 
     <com.yashoid.chartfortelegram.AreaSelectorView
         android:id="@+id/areaselector"
@@ -35,16 +107,38 @@
         app:layout_constraintLeft_toLeftOf="@+id/chart_map"
         app:layout_constraintRight_toRightOf="@+id/chart_map"
         app:layout_constraintTop_toTopOf="@+id/chart_map"
-        app:layout_constraintBottom_toBottomOf="@+id/chart_map"/>
+        app:layout_constraintBottom_toBottomOf="@+id/chart_map"
 
-    <LinearLayout
+        android:elevation="2dp"/>
+
+    <ScrollView
         android:id="@+id/choices"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chart_map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="36dp"
 
-        android:orientation="vertical"/>
+        android:elevation="2dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:fadeScrollbars="false">
+
+        <com.yashoid.chartfortelegram.ChartSelector
+            android:id="@+id/chartselector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"/>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/credit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#888"/>
 
 </android.support.constraint.ConstraintLayout>

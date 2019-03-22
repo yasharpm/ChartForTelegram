@@ -102,13 +102,25 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
         canvas.drawLine(x, bounds.top, x, bounds.bottom, mLinePaint);
 
         for (ChartDrawable line: mChartLines) {
-            float y = line.getY(mSelectedIndex);
+            int lineIndex = mHorizontalMeasurementsInfo.getChartIndexForIndex(mSelectedIndex, line.getChartLine().getChart());
+
+            if (lineIndex == -1) {
+                continue;
+            }
+
+            float y = line.getY(lineIndex);
 
             canvas.drawCircle(x, y, mRadius, mBackgroundPaint);
         }
 
         for (ChartDrawable line: mChartLines) {
-            float y = line.getY(mSelectedIndex);
+            int lineIndex = mHorizontalMeasurementsInfo.getChartIndexForIndex(mSelectedIndex, line.getChartLine().getChart());
+
+            if (lineIndex == -1) {
+                continue;
+            }
+
+            float y = line.getY(lineIndex);
 
             canvas.drawCircle(x, y, mRadius, line.getPaint());
         }

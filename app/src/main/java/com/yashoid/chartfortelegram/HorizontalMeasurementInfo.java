@@ -1,5 +1,7 @@
 package com.yashoid.chartfortelegram;
 
+import com.yashoid.chartfortelegram.data.Chart;
+
 public interface HorizontalMeasurementInfo {
 
     interface OnHorizontalMeasurementsChangedListener {
@@ -7,6 +9,22 @@ public interface HorizontalMeasurementInfo {
         void onHorizontalMeasurementsChanged();
 
     }
+
+    interface OnRangeChangedListener {
+
+        void onRangeChanged(long start, long end);
+
+    }
+
+    void addChart(Chart chart);
+
+    void removeChart(Chart chart);
+
+    long[] getTimestamps();
+
+    int getChartIndexForIndex(int index, Chart chart);
+
+    float getXForIndex(Chart chart, int index);
 
     float getXForIndex(int index);
 
@@ -19,5 +37,7 @@ public interface HorizontalMeasurementInfo {
     void addOnHorizontalMeasurementsChangedListener(OnHorizontalMeasurementsChangedListener listener);
 
     void removeOnHorizontalMeasurementsChangedListener(OnHorizontalMeasurementsChangedListener listener);
+
+    void setOnRangeChangedListener(OnRangeChangedListener listener);
 
 }

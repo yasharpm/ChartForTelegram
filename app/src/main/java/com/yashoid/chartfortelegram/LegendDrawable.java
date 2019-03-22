@@ -25,7 +25,7 @@ public class LegendDrawable extends Drawable implements HorizontalMeasurementInf
     private float mMinimumRequiredSpaceForLabels;
     private float mAvailableSpace;
 
-    private Chart mChart = null;
+    private long[] mTimestamps = null;
 
     private HorizontalMeasurementInfo mMeasurementInfo = null;
 
@@ -45,12 +45,12 @@ public class LegendDrawable extends Drawable implements HorizontalMeasurementInf
     private boolean mMeasurementInfoInvalidated = true;
     private boolean mOmitRatioInvalidated = true;
 
-    public LegendDrawable() {
+    public LegendDrawable(float textSize) {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(Color.CYAN);
-        mPaint.setTextSize(10 * 3);
+        mPaint.setColor(0xff96a2aa);
+        mPaint.setTextSize(textSize);
         mPaint.setTextAlign(Paint.Align.LEFT);
 
         mFadePaint = new Paint(mPaint);
@@ -86,8 +86,22 @@ public class LegendDrawable extends Drawable implements HorizontalMeasurementInf
         invalidateSelf();
     }
 
-    public void setChart(Chart chart) {
-        mChart = chart;
+    @Override
+    public int getIntrinsicHeight() {
+        Paint.FontMetrics fm = mPaint.getFontMetrics();
+
+        return (int) (fm.bottom - fm.top);
+    }
+
+    public void setTextColor(int color) {
+        mPaint.setColor(color);
+        mFadePaint.setColor(color);
+
+        invalidateSelf();
+    }
+
+    public void setTimestamps(long[] timestamps) {
+        mTimestamps = timestamps;
 
         mChartInvalidated = true;
         mLabelOffsetsInvalidated = true;
@@ -126,14 +140,15 @@ public class LegendDrawable extends Drawable implements HorizontalMeasurementInf
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
 
-        mTextY = bounds.top + bounds.height() / 2;
+//        mTextY = bounds.top + bounds.height() / 2;
+        mTextY = bounds.bottom;
 
         invalidateSelf();
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (mChart == null || mMeasurementInfo == null) {
+        if (mTimestamps == null || mMeasurementInfo == null) {
             return;
         }
 
@@ -186,16 +201,14 @@ public class LegendDrawable extends Drawable implements HorizontalMeasurementInf
     }
 
     private void prepareForChart() {
-        long[] timestamps = mChart.getTimestamps();
-
-        mLabels = new String[timestamps.length];
-        mLabelXOffsets = new float[timestamps.length];
-        mLabelPositions = new float[timestamps.length];
+        mLabels = new String[mTimestamps.length];
+        mLabelXOffsets = new float[mTimestamps.length];
+        mLabelPositions = new float[mTimestamps.length];
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd");
 
         for (int i = 0; i < mLabels.length; i++) {
-            mLabels[i] = dateFormat.format(new Date(timestamps[i]));
+            mLabels[i] = dateFormat.format(new Date(mTimestamps[i]));
         }
     }
 

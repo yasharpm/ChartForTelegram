@@ -4,6 +4,8 @@ import android.graphics.Paint;
 
 public class ChartLine {
 
+    private Chart mChart;
+
     private String mName;
 
     private int mColor;
@@ -23,8 +25,20 @@ public class ChartLine {
         mMaxValue = mSearchTree.getMaxValue();
     }
 
+    protected void setChart(Chart chart) {
+        mChart = chart;
+    }
+
+    public Chart getChart() {
+        return mChart;
+    }
+
     public String getName() {
         return mName;
+    }
+
+    public int getColor() {
+        return mColor;
     }
 
     public int getMaxValue() {

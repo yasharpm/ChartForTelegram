@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="toolbar_content">#FFFFFF</color>
+
+    <color name="light_toolbar">#517da2</color>
+    <color name="light_statusbar">#426382</color>
+    <color name="light_body_background">#ffffff</color>
+    <color name="light_title">#3896d4</color>
+    <color name="light_background">#f0f0f0</color>
+    <color name="light_chart_legend">#96a2aa</color>
+    <color name="light_selection">#e5ebef</color>
+    <color name="light_scale">#f1f1f2</color>
+    <color name="light_area_solid">#99e6ebf0</color>
+    <color name="light_area_border">#30426382</color>
+    <color name="light_textcolor">#222222</color>
+    <color name="light_chartline_divider">#e0e0e0</color>
+
+    <color name="dark_toolbar">#212d3b</color>
+    <color name="dark_statusbar">#1a242e</color>
+    <color name="dark_body_background">#1d2733</color>
+    <color name="dark_title">#3896d4</color>
+    <color name="dark_background">#151e27</color>
+    <color name="dark_chart_legend">#506372</color>
+    <color name="dark_selection">#131c26</color>
+    <color name="dark_scale">#161f2b</color>
+    <color name="dark_area_solid">#3301101b</color>
+    <color name="dark_area_border">#54517da2</color>
+    <color name="dark_textcolor">#ffffff</color>
+    <color name="dark_chartline_divider">#0b131e</color>
+
 </resources>

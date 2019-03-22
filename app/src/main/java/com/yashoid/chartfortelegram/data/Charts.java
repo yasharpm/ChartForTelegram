@@ -116,7 +116,13 @@ public class Charts {
             }
         }
 
-        return new Chart(timeStamps, lines.toArray(new ChartLine[lines.size()]));
+        Chart chart = new Chart(timeStamps, lines.toArray(new ChartLine[lines.size()]));
+
+        for (ChartLine line: lines) {
+            line.setChart(chart);
+        }
+
+        return chart;
     }
 
     private static HashMap<String, List<Long>> readColumns(JSONArray array) throws JSONException {

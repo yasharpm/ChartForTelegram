@@ -101,8 +101,12 @@ public class ScaleDrawable extends Drawable implements Drawable.Callback {
         mAnimator.start();
     }
 
-    public void setLabelStyle(float textSize, int color) {
-        mDrawable.setLabelStyle(textSize, color);
+    public void setLabelColor(int color) {
+        mDrawable.setLabelColor(color);
+    }
+
+    public void setLabelTextSize(float textSize) {
+        mDrawable.setLabelTextSize(textSize);
     }
 
     public void setLabelTypeface(Typeface typeface) {

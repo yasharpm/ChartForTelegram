@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.animation.LinearInterpolator;
 
+import com.yashoid.chartfortelegram.data.Chart;
 import com.yashoid.chartfortelegram.data.ChartLine;
 
 public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
@@ -21,17 +22,18 @@ public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo
     private float mCeiling;
 
     private ChartLine mChartLine = null;
+    private Chart mChart;
 
     private float[] mLines = null;
 
     private boolean mHorizontallyInvalidated = true;
     private boolean mVerticallyInvalidated = true;
 
-    public ChartDrawable() {
+    public ChartDrawable(float strokeWidth) {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(6);
+        mPaint.setStrokeWidth(strokeWidth);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
 
         mAnimator = new ValueAnimator();
@@ -85,6 +87,7 @@ public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo
 
     public void setChartLine(ChartLine chartLine) {
         mChartLine = chartLine;
+        mChart = mChartLine.getChart();
 
         mChartLine.applyPaint(mPaint);
         mPaint.setAlpha(0);
@@ -169,7 +172,7 @@ public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo
         final float yBase = bounds.top + height;
         final float yBaseRatio = -height / mCeiling;
 
-        float x = 0;
+        float x = mHorizontalMeasurementInfo.getXForIndex(mChart, 0);
         float y = mVerticallyInvalidated ? yBase + values[0] * yBaseRatio : 0;
 
         int lineIndex = 0;
@@ -177,7 +180,7 @@ public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo
         for (int i = 0; i < values.length - 1; i++) {
             if (mHorizontallyInvalidated) {
                 mLines[lineIndex] = x;
-                x = mHorizontalMeasurementInfo.getXForIndex(i + 1);
+                x = mHorizontalMeasurementInfo.getXForIndex(mChart, i + 1);
                 mLines[lineIndex + 2] = x;
             }
 

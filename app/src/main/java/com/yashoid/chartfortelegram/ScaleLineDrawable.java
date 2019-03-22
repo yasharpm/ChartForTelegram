@@ -51,9 +51,13 @@ public class ScaleLineDrawable extends Drawable {
         mLabelMargin = source.mLabelMargin;
     }
 
-    public void setLabelStyle(float textSize, int color) {
+    public void setLabelColor(int color) {
         mLabelPaint.setColor(color);
 
+        invalidateSelf();
+    }
+
+    public void setLabelTextSize(float textSize) {
         if (mLabelPaint.getTextSize() != textSize) {
             mLabelPaint.setTextSize(textSize);
 

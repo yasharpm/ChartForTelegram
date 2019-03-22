@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,8 +36,8 @@ public class AreaSelectorView extends View {
 
     private long mMinimumSelectedArea;
 
-    private long mSelectionStart;
-    private long mSelectionEnd;
+    private long mSelectionStart = -1;
+    private long mSelectionEnd = -1;
 
     private boolean mMeasurementsInvalidated = false;
 
@@ -62,21 +63,35 @@ public class AreaSelectorView extends View {
     }
 
     private void initialize(Context context, AttributeSet attrs, int defStyleAttr) {
-        mTouchArea = context.getResources().getDisplayMetrics().density * 36;
+        float density = getResources().getDisplayMetrics().density;
+
+        mTouchArea = density * 36;
 
         mCoverPaint = new Paint();
-        mCoverPaint.setColor(0x22000000);
+        mCoverPaint.setColor(0x99e6ebf0);
         mCoverPaint.setStyle(Paint.Style.FILL);
 
         mEdgePaint = new Paint(mCoverPaint);
-        mEdgePaint.setColor(0x44000000);
+        mEdgePaint.setColor(0x30426382);
 
-        mHorizontalEdgeWidth = 4;
-        mVerticalEdgeWidth = 16;
+        mHorizontalEdgeWidth = density * 1f;
+        mVerticalEdgeWidth = density * 4f;
 
         setMinimumSelectedArea(7L * 24L * 60L * 60L * 1000L);
 
         mGestureDetector = new GestureDetector(context, mOnGestureListener);
+    }
+
+    public void setColorColor(int color) {
+        mCoverPaint.setColor(color);
+
+        invalidate();
+    }
+
+    public void setEdgeColor(int color) {
+        mEdgePaint.setColor(color);
+
+        invalidate();
     }
 
     public void setOnSelectedAreaChangedListener(OnSelectedAreaChangedListener listener) {
@@ -87,14 +102,34 @@ public class AreaSelectorView extends View {
         mStart = start;
         mEnd = end;
 
+        boolean selectionChanged = false;
+
+        if (mSelectionStart == -1 || mSelectionStart < mStart) {
+            mSelectionStart = mStart;
+
+            selectionChanged = true;
+        }
+
+        if (mSelectionEnd == -1 || mSelectionEnd > mEnd) {
+            mSelectionEnd = mEnd;
+
+            selectionChanged = true;
+        }
+
         if (mSelectionStart == mSelectionEnd) {
             mSelectionStart = start;
             mSelectionEnd = end;
+
+            selectionChanged = true;
         }
 
         mMeasurementsInvalidated = true;
 
         invalidate();
+
+        if (selectionChanged && mOnSelectedAreaChangedListener != null) {
+            mOnSelectedAreaChangedListener.onSelectedAreaChanged(mSelectionStart, mSelectionEnd);
+        }
     }
 
     public void setMinimumSelectedArea(long area) {
