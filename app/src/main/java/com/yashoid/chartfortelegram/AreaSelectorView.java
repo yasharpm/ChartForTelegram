@@ -82,7 +82,7 @@ public class AreaSelectorView extends View {
         mGestureDetector = new GestureDetector(context, mOnGestureListener);
     }
 
-    public void setColorColor(int color) {
+    public void setCoverColor(int color) {
         mCoverPaint.setColor(color);
 
         invalidate();

@@ -7,10 +7,55 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
+import com.yashoid.chartfortelegram.data.Chart;
+import com.yashoid.chartfortelegram.data.ChartLine;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SelectionLineDrawable extends Drawable implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
+
+    public static class SelectionInfo {
+
+        public final float x;
+        public final long time;
+        public final List<SelectionIntersectionInfo> intersections = new ArrayList<>();
+
+        private SelectionInfo(float x, long time) {
+            this.x = x;
+            this.time = time;
+        }
+
+    }
+
+    public static class SelectionIntersectionInfo {
+
+        public final Chart chart;
+        public final ChartLine chartLine;
+        public final float y;
+        public final int value;
+
+        private final ChartDrawable drawable;
+
+        private SelectionIntersectionInfo(ChartDrawable line, float y, int value) {
+            drawable = line;
+
+            chartLine = line.getChartLine();
+            chart = chartLine.getChart();
+            this.y = y;
+            this.value = value;
+        }
+
+    }
+
+    public interface OnSelectionInfoChangedListener {
+
+        void onSelectionInfoChanged(SelectionInfo selectionInfo);
+
+    }
+
+    private OnSelectionInfoChangedListener mOnSelectionInfoChangedListener = null;
 
     private Paint mLinePaint;
     private Paint mBackgroundPaint;
@@ -24,6 +69,9 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
     private HorizontalMeasurementInfo mHorizontalMeasurementsInfo;
     private int mMaxValue;
 
+    private boolean mSelectionInfoInvalidated = true;
+    private SelectionInfo mSelectionInfo = null;
+
     public SelectionLineDrawable() {
         mLinePaint = new Paint();
         mLinePaint.setAntiAlias(true);
@@ -33,8 +81,17 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
         mBackgroundPaint.setStyle(Paint.Style.FILL);
     }
 
-    public void setLineStyle(float width, int color) {
+    public void setOnSelectionInfoChangedListener(OnSelectionInfoChangedListener listener) {
+        mOnSelectionInfoChangedListener = listener;
+    }
+
+    public void setLineWidth(float width) {
         mLinePaint.setStrokeWidth(width);
+
+        invalidateSelf();
+    }
+
+    public void setLineColor(int color) {
         mLinePaint.setColor(color);
 
         invalidateSelf();
@@ -61,16 +118,22 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
             mHorizontalMeasurementsInfo.addOnHorizontalMeasurementsChangedListener(this);
         }
 
+        mSelectionInfoInvalidated = true;
+
         invalidateSelf();
     }
 
     @Override
     public void onHorizontalMeasurementsChanged() {
+        mSelectionInfoInvalidated = true;
+
         invalidateSelf();
     }
 
     public void setMaxValue(int maxValue) {
         mMaxValue = maxValue;
+
+        mSelectionInfoInvalidated = true;
 
         invalidateSelf();
     }
@@ -80,39 +143,58 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
 
         mChartLines.addAll(lines);
 
+        mSelectionInfoInvalidated = true;
+
         invalidateSelf();
     }
 
     public void setSelectedIndex(int index) {
         mSelectedIndex = index;
 
+        mSelectionInfoInvalidated = true;
+
         invalidateSelf();
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (mSelectedIndex == -1 || mHorizontalMeasurementsInfo == null) {
+        if (mSelectionInfoInvalidated) {
+            updateSelectionInfo();
+
+            mSelectionInfoInvalidated = false;
+        }
+
+        if (mSelectionInfo == null) {
             return;
         }
 
         final Rect bounds = getBounds();
 
-        final float x = mHorizontalMeasurementsInfo.getXForIndex(mSelectedIndex);
+        final float x = mSelectionInfo.x;
 
         canvas.drawLine(x, bounds.top, x, bounds.bottom, mLinePaint);
 
-        for (ChartDrawable line: mChartLines) {
-            int lineIndex = mHorizontalMeasurementsInfo.getChartIndexForIndex(mSelectedIndex, line.getChartLine().getChart());
-
-            if (lineIndex == -1) {
-                continue;
-            }
-
-            float y = line.getY(lineIndex);
-
-            canvas.drawCircle(x, y, mRadius, mBackgroundPaint);
+        for (SelectionIntersectionInfo info: mSelectionInfo.intersections) {
+            canvas.drawCircle(x, info.y, mRadius, mBackgroundPaint);
         }
 
+        for (SelectionIntersectionInfo info: mSelectionInfo.intersections) {
+            canvas.drawCircle(x, info.y, mRadius, info.drawable.getPaint());
+        }
+    }
+
+    private void updateSelectionInfo() {
+        if (mSelectedIndex == -1 || mHorizontalMeasurementsInfo == null) {
+            mSelectionInfo = null;
+
+            notifySelectionInfoChanged();
+            return;
+        }
+
+        float x = mHorizontalMeasurementsInfo.getXForIndex(mSelectedIndex);
+
+        mSelectionInfo = new SelectionInfo(x, mHorizontalMeasurementsInfo.getTimestamps()[mSelectedIndex]);
+
         for (ChartDrawable line: mChartLines) {
             int lineIndex = mHorizontalMeasurementsInfo.getChartIndexForIndex(mSelectedIndex, line.getChartLine().getChart());
 
@@ -122,7 +204,15 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
 
             float y = line.getY(lineIndex);
 
-            canvas.drawCircle(x, y, mRadius, line.getPaint());
+            mSelectionInfo.intersections.add(new SelectionIntersectionInfo(line, y, line.getChartLine().getValues()[lineIndex]));
+        }
+
+        notifySelectionInfoChanged();
+    }
+
+    private void notifySelectionInfoChanged() {
+        if (mOnSelectionInfoChangedListener != null) {
+            mOnSelectionInfoChangedListener.onSelectionInfoChanged(mSelectionInfo);
         }
     }
 

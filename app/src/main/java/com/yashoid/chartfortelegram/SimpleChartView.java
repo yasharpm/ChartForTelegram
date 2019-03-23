@@ -4,11 +4,8 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
@@ -21,8 +18,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class SimpleChartView extends View implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
-
-    private static final String TAG = "SimpleChartView";
 
     public static final long ANIMATION_DURATION = 300; // Duration in the given animation was 333.
 
@@ -267,8 +262,6 @@ public class SimpleChartView extends View implements HorizontalMeasurementInfo.O
 
     @Override
     protected void onDraw(Canvas canvas) {
-        long start = System.currentTimeMillis();
-
         super.onDraw(canvas);
 
         for (ChartDrawable chartDrawable: mChartDrawables) {
@@ -290,8 +283,6 @@ public class SimpleChartView extends View implements HorizontalMeasurementInfo.O
                 chartDrawable.draw(canvas);
             }
         }
-
-        Log.d(TAG, "Draw time: " + (System.currentTimeMillis() - start));
     }
 
 }

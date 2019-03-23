@@ -1,32 +1,37 @@
 package com.yashoid.chartfortelegram;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.yashoid.chartfortelegram.checkbox.CheckDrawable;
 import com.yashoid.chartfortelegram.data.Chart;
 import com.yashoid.chartfortelegram.data.ChartLine;
 import com.yashoid.chartfortelegram.data.Charts;
+import com.yashoid.chartfortelegram.selectioninfo.InfoView;
+import com.yashoid.chartfortelegram.selectioninfo.InfoViewHolder;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends Activity implements AreaSelectorView.OnSelectedAreaChangedListener {
+public class MainActivity extends Activity implements AreaSelectorView.OnSelectedAreaChangedListener,
+        SelectionLineDrawable.OnSelectionInfoChangedListener {
 
     private MainChartView mChartMain;
     private SimpleChartView mChartMap;
     private AreaSelectorView mAreaSelector;
     private ChartSelector mChartSelector;
+    private InfoViewHolder mInfoView;
 
     private HashMap<Chart, List<ChartLine>> mCharts = new HashMap<>();
+
+    private boolean mDay = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +42,7 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
         mChartMap = findViewById(R.id.chart_map);
         mAreaSelector = findViewById(R.id.areaselector);
         mChartSelector = findViewById(R.id.chartselector);
+        mInfoView = findViewById(R.id.infoview);
 
         TextView credit = findViewById(R.id.credit);
         credit.setMovementMethod(LinkMovementMethod.getInstance());
@@ -90,7 +96,25 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
 
         });
 
+        mChartMain.setOnSelectionInfoChangedListener(this);
+
+        findViewById(R.id.button_lightmode).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDay) {
+                    goToNight();
+                }
+                else {
+                    goToDay();
+                }
+
+                mDay = !mDay;
+            }
+        });
+
         go();
+
+        goToDay();
     }
 
     private void updateAreaSelectorRange() {
@@ -116,6 +140,17 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
         mChartMain.setSelectedArea(start, end);
     }
 
+    @Override
+    public void onSelectionInfoChanged(SelectionLineDrawable.SelectionInfo selectionInfo) {
+        if (selectionInfo == null) {
+            mInfoView.setVisibility(View.INVISIBLE);
+        }
+        else {
+            mInfoView.setVisibility(View.VISIBLE);
+            mInfoView.setIntersectionInfo(selectionInfo, mChartMain.getXFix());
+        }
+    }
+
     private void go() {
         try {
             List<Chart> charts = Charts.readChartsFromAssets(this, "chart_data.json");
@@ -126,6 +161,48 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
 
             Toast.makeText(this, "Failed to read charts: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void goToNight() {
+        Resources res = getResources();
+
+        findViewById(R.id.root).setBackgroundColor(res.getColor(R.color.dark_background));
+        findViewById(R.id.toolbar).setBackgroundColor(res.getColor(R.color.dark_toolbar));
+        findViewById(R.id.body).setBackgroundColor(res.getColor(R.color.dark_body_background));
+        ((TextView) findViewById(R.id.text_followers)).setTextColor(res.getColor(R.color.dark_title));
+        mChartMain.setLegendColor(res.getColor(R.color.dark_chart_legend));
+        mChartMain.setScaleLinesColor(res.getColor(R.color.dark_scale));
+        mChartMain.setSelectionLineColor(res.getColor(R.color.dark_selection));
+        mChartMain.setSelectionBackgroundColor(res.getColor(R.color.dark_body_background));
+        mAreaSelector.setCoverColor(res.getColor(R.color.dark_area_solid));
+        mAreaSelector.setEdgeColor(res.getColor(R.color.dark_area_border));
+        mChartSelector.setColors(
+                res.getColor(R.color.dark_textcolor),
+                res.getColor(R.color.dark_body_background),
+                res.getColor(R.color.dark_chartline_divider)
+        );
+        mInfoView.setColors(res.getColor(R.color.dark_textcolor), res.getColor(R.color.dark_body_background));
+    }
+
+    private void goToDay() {
+        Resources res = getResources();
+
+        findViewById(R.id.root).setBackgroundColor(res.getColor(R.color.light_background));
+        findViewById(R.id.toolbar).setBackgroundColor(res.getColor(R.color.light_toolbar));
+        findViewById(R.id.body).setBackgroundColor(res.getColor(R.color.light_body_background));
+        ((TextView) findViewById(R.id.text_followers)).setTextColor(res.getColor(R.color.light_title));
+        mChartMain.setLegendColor(res.getColor(R.color.light_chart_legend));
+        mChartMain.setScaleLinesColor(res.getColor(R.color.light_scale));
+        mChartMain.setSelectionLineColor(res.getColor(R.color.light_selection));
+        mChartMain.setSelectionBackgroundColor(res.getColor(R.color.light_body_background));
+        mAreaSelector.setCoverColor(res.getColor(R.color.light_area_solid));
+        mAreaSelector.setEdgeColor(res.getColor(R.color.light_area_border));
+        mChartSelector.setColors(
+                res.getColor(R.color.light_textcolor),
+                res.getColor(R.color.light_body_background),
+                res.getColor(R.color.light_chartline_divider)
+        );
+        mInfoView.setColors(res.getColor(R.color.light_textcolor), res.getColor(R.color.light_body_background));
     }
 
 }

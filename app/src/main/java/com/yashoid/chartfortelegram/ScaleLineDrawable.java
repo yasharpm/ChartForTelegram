@@ -75,8 +75,13 @@ public class ScaleLineDrawable extends Drawable {
         invalidateSelf();
     }
 
-    public void setLineStyle(float width, int color) {
+    public void setLineWidth(float width) {
         mLinePaint.setStrokeWidth(width);
+
+        invalidateSelf();
+    }
+
+    public void setLineColor(int color) {
         mLinePaint.setColor(color);
 
         invalidateSelf();
@@ -188,14 +193,14 @@ public class ScaleLineDrawable extends Drawable {
         mValues[5] = commaSeparated(maxValueStart);
     }
 
-    private String commaSeparated(int value) {
+    public static String commaSeparated(int value) {
         int current = value % 1000;
         int thousands = value / 1000;
 
         return (thousands == 0) ? "" + current : commaSeparated(thousands) + "," + fixLength(current);
     }
 
-    private String fixLength(int value) {
+    public static String fixLength(int value) {
         String s = "" + value;
 
         while (s.length() < 3) {

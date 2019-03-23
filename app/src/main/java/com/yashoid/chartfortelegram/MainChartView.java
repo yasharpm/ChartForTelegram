@@ -4,10 +4,8 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -21,8 +19,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class MainChartView extends View implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
-
-    private static final String TAG = "MainChartView";
 
     public static final long ANIMATION_DURATION = 300; // Duration in the given animation was 333.
 
@@ -96,12 +92,18 @@ public class MainChartView extends View implements HorizontalMeasurementInfo.OnH
         mScaleDrawable.setLabelColor(0xff96a2aa);
         mScaleDrawable.setLabelMargin(4 * density);
         mScaleDrawable.setCallback(this);
+        mScaleDrawable.setLineWidth(density * 0.75f);
 
         mSelectionDrawable = new SelectionLineDrawable();
         mSelectionDrawable.setBackgroundColor(0xffffffff);
-        mSelectionDrawable.setRadius(4 * density);
+        mSelectionDrawable.setRadius(5 * density);
+        mSelectionDrawable.setLineWidth(density * 1);
         mSelectionDrawable.setHorizontalMeasurementsInfo(mHorizontalMeasurementInfo);
         mSelectionDrawable.setCallback(this);
+    }
+
+    public void setOnSelectionInfoChangedListener(SelectionLineDrawable.OnSelectionInfoChangedListener listener) {
+        mSelectionDrawable.setOnSelectionInfoChangedListener(listener);
     }
 
     public void setLegendColor(int color) {
@@ -109,9 +111,17 @@ public class MainChartView extends View implements HorizontalMeasurementInfo.OnH
         mScaleDrawable.setLabelColor(color);
     }
 
-    public void setLinesStyle(float width, int color) {
-        mScaleDrawable.setLineStyle(width, color);
-        mSelectionDrawable.setLineStyle(width, color);
+    public void setLinesWidth(float width) {
+        mScaleDrawable.setLineWidth(width);
+        mSelectionDrawable.setLineWidth(width);
+    }
+
+    public void setScaleLinesColor(int color) {
+        mScaleDrawable.setLineColor(color);
+    }
+
+    public void setSelectionLineColor(int color) {
+        mSelectionDrawable.setLineColor(color);
     }
 
     public void setSelectionBackgroundColor(int color) {
@@ -207,7 +217,7 @@ public class MainChartView extends View implements HorizontalMeasurementInfo.OnH
             mCharts.remove(chartLine.getChart());
 
             mHorizontalMeasurementInfo.removeChart(chartLine.getChart());
-            
+
             mLegendDrawable.setTimestamps(mHorizontalMeasurementInfo.getTimestamps());
         }
     }
@@ -353,10 +363,12 @@ public class MainChartView extends View implements HorizontalMeasurementInfo.OnH
         invalidate();
     }
 
+    public float getXFix() {
+        return -mHorizontalMeasurementInfo.getXForTime(mSelectedAreaStart);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
-        long start = System.currentTimeMillis();
-
         super.onDraw(canvas);
 
         mScaleDrawable.draw(canvas);
@@ -389,12 +401,14 @@ public class MainChartView extends View implements HorizontalMeasurementInfo.OnH
         mLegendDrawable.draw(canvas);
 
         canvas.restore();
-
-        Log.d(TAG, "Draw time: " + (System.currentTimeMillis() - start));
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mChartLines.isEmpty()) {
+            return false;
+        }
+
         int timeIndex = mHorizontalMeasurementInfo.getTimeIndexForX(mHorizontalMeasurementInfo.getXForTime(mSelectedAreaStart) + event.getX());
 
         if (mOnTimeSelectedListener != null) {

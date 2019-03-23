@@ -10,7 +10,7 @@ import android.graphics.drawable.Drawable;
 
 public class CheckDrawable extends Drawable {
 
-    private static final float HEIGHT_RATIO = 0.5f;
+    private static final float HEIGHT_RATIO = 0.45f;
 
     private int mWidth;
     private int mHeight;
@@ -26,7 +26,7 @@ public class CheckDrawable extends Drawable {
 
     public CheckDrawable(int color, float density) {
         mWidth = (int) (40 * density);
-        mHeight = (int) (40 * density);
+        mHeight = (int) (48 * density);
 
         mCorners = 2 * density;
 
@@ -44,6 +44,13 @@ public class CheckDrawable extends Drawable {
         mBackgroundStrokePaint.setStyle(Paint.Style.STROKE);
         mBackgroundStrokePaint.setStrokeWidth(1.5f * density);
         mBackgroundStrokePaint.setStrokeCap(Paint.Cap.ROUND);
+    }
+
+    public void setBackgroundColor(int color) {
+        mBackgroundFillPaint.setColor(color);
+        mBackgroundStrokePaint.setColor(color);
+
+        invalidateSelf();
     }
 
     @Override

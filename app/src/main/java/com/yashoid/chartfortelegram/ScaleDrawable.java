@@ -113,8 +113,12 @@ public class ScaleDrawable extends Drawable implements Drawable.Callback {
         mDrawable.setLabelTypeFace(typeface);
     }
 
-    public void setLineStyle(float width, int color) {
-        mDrawable.setLineStyle(width, color);
+    public void setLineWidth(float width) {
+        mDrawable.setLineWidth(width);
+    }
+
+    public void setLineColor(int color) {
+        mDrawable.setLineColor(color);
     }
 
     public void setLabelMargin(float margin) {
