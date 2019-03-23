@@ -9,19 +9,27 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yashoid.chartfortelegram.chart.MainChartView;
+import com.yashoid.chartfortelegram.chart.SelectionLineDrawable;
+import com.yashoid.chartfortelegram.chart.SimpleChartView;
 import com.yashoid.chartfortelegram.data.Chart;
 import com.yashoid.chartfortelegram.data.ChartLine;
 import com.yashoid.chartfortelegram.data.Charts;
-import com.yashoid.chartfortelegram.selectioninfo.InfoView;
 import com.yashoid.chartfortelegram.selectioninfo.InfoViewHolder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Created by Yashar PourMohammad
+ *
+ * Github profile : https://github.com/yasharpm
+ * Project Github link : https://github.com/yasharpm/ChartForTelegram
+ * 
+ */
 public class MainActivity extends Activity implements AreaSelectorView.OnSelectedAreaChangedListener,
-        SelectionLineDrawable.OnSelectionInfoChangedListener {
+        SelectionLineDrawable.OnSelectionInfoChangedListener, ChartTracker.OnChartsChangedListener,
+        MainChartView.OnTimeSelectedListener {
 
     private MainChartView mChartMain;
     private SimpleChartView mChartMap;
@@ -29,7 +37,7 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
     private ChartSelector mChartSelector;
     private InfoViewHolder mInfoView;
 
-    private HashMap<Chart, List<ChartLine>> mCharts = new HashMap<>();
+    private ChartTracker mChartTracker;
 
     private boolean mDay = true;
 
@@ -48,86 +56,86 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
         credit.setMovementMethod(LinkMovementMethod.getInstance());
         credit.setText(Html.fromHtml("Moon icon made by <a href=\"https://www.freepik.com/\" title=\"Freepik\">Freepik</a> from <a href=\"https://www.flaticon.com/\" \t\t\t    title=\"Flaticon\">www.flaticon.com</a> is licensed by <a href=\"http://creativecommons.org/licenses/by/3.0/\" \t\t\t    title=\"Creative Commons BY 3.0\" target=\"_blank\">CC 3.0 BY</a>"));
 
+        mChartTracker = new ChartTracker();
+        mChartTracker.addOnChartsChangedListener(this);
+
+        mChartMain.setChartTracker(mChartTracker);
+        mChartMap.setChartTracker(mChartTracker);
+
         mAreaSelector.setOnSelectedAreaChangedListener(this);
 
-        mChartMain.setOnTimeSelectedListener(new MainChartView.OnTimeSelectedListener() {
-            @Override
-            public void onTimeSelected(int timeIndex) {
-                mChartMain.setSelectedTimeIndex(timeIndex);
-            }
-        });
+        mChartMain.setOnTimeSelectedListener(this);
+        mChartMain.setOnSelectionInfoChangedListener(this);
 
         mChartSelector.setOnChartLineSelectionChangedListener(new ChartSelector.OnChartLineSelectionChangedListener() {
 
             @Override
-            public void onChartLineSelected(ChartLine line) {
-                List<ChartLine> lines = mCharts.get(line.getChart());
-
-                if (lines == null) {
-                    lines = new ArrayList<>();
-                    mCharts.put(line.getChart(), lines);
-
-                    updateAreaSelectorRange();
-                }
-
-                lines.add(line);
-
-                mChartMain.addChartLine(line);
-                mChartMap.addChartLine(line);
+            public void onChartLineSelected(ChartLine chartLine) {
+                mChartTracker.addChartLine(chartLine);
 
                 mChartMain.setSelectedArea(mAreaSelector.getSelectionStart(), mAreaSelector.getSelectionEnd());
             }
 
             @Override
-            public void onChartLineUnselected(ChartLine line) {
-                mChartMain.removeChartLine(line);
-                mChartMap.removeChartLine(line);
-
-                List<ChartLine> lines = mCharts.get(line.getChart());
-
-                if (lines != null && lines.remove(line) && lines.isEmpty()) {
-                    mCharts.remove(line.getChart());
-
-                    updateAreaSelectorRange();
-                }
+            public void onChartLineUnselected(ChartLine chartLine) {
+                mChartTracker.removeChartLine(chartLine);
 
                 mChartMain.setSelectedArea(mAreaSelector.getSelectionStart(), mAreaSelector.getSelectionEnd());
             }
 
         });
-
-        mChartMain.setOnSelectionInfoChangedListener(this);
 
         findViewById(R.id.button_lightmode).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mDay) {
-                    goToNight();
+                    switchNightMode();
                 }
                 else {
-                    goToDay();
+                    switchDayMode();
                 }
 
                 mDay = !mDay;
             }
         });
 
-        go();
+        switchDayMode();
 
-        goToDay();
+        List<Chart> charts = getCharts();
+
+        if (charts != null) {
+            mChartSelector.setCharts(charts);
+        }
+    }
+
+    @Override
+    public void onTimeSelected(int timeIndex) {
+        mChartMain.setSelectedTimeIndex(timeIndex);
+    }
+
+    @Override
+    public void onChartAdded(Chart chart) {
+        updateAreaSelectorRange();
+    }
+
+    @Override
+    public void onChartRemoved(Chart chart) {
+        updateAreaSelectorRange();
     }
 
     private void updateAreaSelectorRange() {
         mChartMain.setSelectedTimeIndex(-1);
 
-        if (mCharts.isEmpty()) {
+        List<Chart> charts = mChartTracker.getCharts();
+
+        if (charts.isEmpty()) {
             return;
         }
 
         long start = Long.MAX_VALUE;
         long end = Long.MIN_VALUE;
 
-        for (Chart chart: mCharts.keySet()) {
+        for (Chart chart: charts) {
             start = Math.min(start, chart.getStartTime());
             end = Math.max(end, chart.getEndTime());
         }
@@ -151,19 +159,19 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
         }
     }
 
-    private void go() {
+    private List<Chart> getCharts() {
         try {
-            List<Chart> charts = Charts.readChartsFromAssets(this, "chart_data.json");
-
-            mChartSelector.setCharts(charts);
+            return Charts.readChartsFromAssets(this, "chart_data.json");
         } catch (IOException e) {
             e.printStackTrace();
 
             Toast.makeText(this, "Failed to read charts: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
+            return null;
         }
     }
 
-    private void goToNight() {
+    private void switchNightMode() {
         Resources res = getResources();
 
         findViewById(R.id.root).setBackgroundColor(res.getColor(R.color.dark_background));
@@ -184,7 +192,7 @@ public class MainActivity extends Activity implements AreaSelectorView.OnSelecte
         mInfoView.setColors(res.getColor(R.color.dark_textcolor), res.getColor(R.color.dark_body_background));
     }
 
-    private void goToDay() {
+    private void switchDayMode() {
         Resources res = getResources();
 
         findViewById(R.id.root).setBackgroundColor(res.getColor(R.color.light_background));

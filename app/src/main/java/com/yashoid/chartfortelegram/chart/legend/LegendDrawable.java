@@ -1,8 +1,7 @@
-package com.yashoid.chartfortelegram;
+package com.yashoid.chartfortelegram.chart.legend;
 
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
@@ -10,14 +9,15 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.animation.LinearInterpolator;
 
-import com.yashoid.chartfortelegram.data.Chart;
+import com.yashoid.chartfortelegram.Config;
+import com.yashoid.chartfortelegram.chart.HorizontalMeasurementInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LegendDrawable extends Drawable implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
 
-    private static final long FADE_DURATION = ChartView.ANIMATION_DURATION;
+    private static final long FADE_DURATION = Config.ANIMATION_DURATION;
 
     private Paint mPaint;
     private Paint mFadePaint;
@@ -49,7 +49,6 @@ public class LegendDrawable extends Drawable implements HorizontalMeasurementInf
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(0xff96a2aa);
         mPaint.setTextSize(textSize);
         mPaint.setTextAlign(Paint.Align.LEFT);
 
@@ -140,7 +139,6 @@ public class LegendDrawable extends Drawable implements HorizontalMeasurementInf
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
 
-//        mTextY = bounds.top + bounds.height() / 2;
         mTextY = bounds.bottom;
 
         invalidateSelf();

@@ -1,4 +1,4 @@
-package com.yashoid.chartfortelegram;
+package com.yashoid.chartfortelegram.chart.scale;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;

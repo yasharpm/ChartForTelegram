@@ -1,4 +1,4 @@
-package com.yashoid.chartfortelegram;
+package com.yashoid.chartfortelegram.chart;
 
 import com.yashoid.chartfortelegram.data.Chart;
 
@@ -29,8 +29,6 @@ public interface HorizontalMeasurementInfo {
     float getXForIndex(int index);
 
     float getXForTime(long time);
-
-    void getIndexesForRange(long start, long end, int[] indexes);
 
     int getTimeIndexForX(float x);
 

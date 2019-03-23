@@ -1,4 +1,4 @@
-package com.yashoid.chartfortelegram;
+package com.yashoid.chartfortelegram.chart;
 
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
@@ -9,10 +9,11 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.animation.LinearInterpolator;
 
+import com.yashoid.chartfortelegram.Config;
 import com.yashoid.chartfortelegram.data.Chart;
 import com.yashoid.chartfortelegram.data.ChartLine;
 
-public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
+public class ChartLineDrawable extends Drawable implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
 
     private Paint mPaint;
 
@@ -29,7 +30,7 @@ public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo
     private boolean mHorizontallyInvalidated = true;
     private boolean mVerticallyInvalidated = true;
 
-    public ChartDrawable(float strokeWidth) {
+    public ChartLineDrawable(float strokeWidth) {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
@@ -37,7 +38,7 @@ public class ChartDrawable extends Drawable implements HorizontalMeasurementInfo
         mPaint.setStrokeCap(Paint.Cap.ROUND);
 
         mAnimator = new ValueAnimator();
-        mAnimator.setDuration(ChartView.ANIMATION_DURATION);
+        mAnimator.setDuration(Config.ANIMATION_DURATION);
         mAnimator.setInterpolator(new LinearInterpolator());
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 

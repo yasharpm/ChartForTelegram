@@ -1,7 +1,6 @@
 package com.yashoid.chartfortelegram;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
@@ -30,6 +29,7 @@ public class ChartSelector extends LinearLayout {
 
     private int mTextColor;
     private int mBackgroundColor;
+    private int mDividerColor;
 
     public ChartSelector(Context context) {
         super(context);
@@ -71,7 +71,7 @@ public class ChartSelector extends LinearLayout {
             for (final ChartLine line: lines) {
                 if (!first) {
                     View divider = new View(getContext());
-                    divider.setBackgroundColor(0xff000000);
+                    divider.setBackgroundColor(mDividerColor);
                     divider.setLayoutParams(dividerParams);
                     addView(divider);
                 }
@@ -115,6 +115,7 @@ public class ChartSelector extends LinearLayout {
     public void setColors(int textColor, int backgroundColor, int dividerColor) {
         mTextColor = textColor;
         mBackgroundColor = backgroundColor;
+        mDividerColor = dividerColor;
 
         final int count = getChildCount();
 

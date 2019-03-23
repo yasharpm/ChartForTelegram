@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yashoid.chartfortelegram.R;
-import com.yashoid.chartfortelegram.SelectionLineDrawable;
+import com.yashoid.chartfortelegram.chart.SelectionLineDrawable;
 
 public class InfoViewHolder extends ViewGroup {
 

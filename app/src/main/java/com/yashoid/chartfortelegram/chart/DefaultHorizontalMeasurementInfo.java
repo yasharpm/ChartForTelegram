@@ -1,10 +1,8 @@
-package com.yashoid.chartfortelegram;
+package com.yashoid.chartfortelegram.chart;
 
 import com.yashoid.chartfortelegram.data.Chart;
-import com.yashoid.chartfortelegram.data.ChartLine;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,6 +47,10 @@ public class DefaultHorizontalMeasurementInfo implements HorizontalMeasurementIn
     @Override
     public void removeChart(Chart chart) {
         mCharts.remove(chart);
+
+        if (mCharts.isEmpty()) {
+            return;
+        }
 
         measureRange();
 
@@ -277,36 +279,6 @@ public class DefaultHorizontalMeasurementInfo implements HorizontalMeasurementIn
         for (int i = 0; i < mTimestamps.length; i++) {
             mXValues[i] = (mXDiff / X_DIFF_UNIT * (mTimestamps[i] - mTimestamps[0]));
         }
-    }
-
-    @Override
-    public void getIndexesForRange(long start, long end, int[] indexes) {
-        int startIndex = -1;
-        int endIndex = -1;
-
-        for (int i = 0; i < mTimestamps.length; i++) {
-            if (mTimestamps[i] < start) {
-                startIndex = i;
-            }
-
-            if (endIndex == -1 && mTimestamps[i] > end) {
-                endIndex = i;
-                break;
-            }
-        }
-
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-
-        if (endIndex == -1) {
-            endIndex = mTimestamps.length;
-        }
-
-        indexes[0] = startIndex;
-        indexes[1] = endIndex;
-
-        // TODO
     }
 
     @Override

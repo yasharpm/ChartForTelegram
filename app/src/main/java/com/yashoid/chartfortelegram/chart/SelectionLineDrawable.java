@@ -1,4 +1,4 @@
-package com.yashoid.chartfortelegram;
+package com.yashoid.chartfortelegram.chart;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -11,7 +11,6 @@ import com.yashoid.chartfortelegram.data.Chart;
 import com.yashoid.chartfortelegram.data.ChartLine;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class SelectionLineDrawable extends Drawable implements HorizontalMeasurementInfo.OnHorizontalMeasurementsChangedListener {
@@ -36,9 +35,9 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
         public final float y;
         public final int value;
 
-        private final ChartDrawable drawable;
+        private final ChartLineDrawable drawable;
 
-        private SelectionIntersectionInfo(ChartDrawable line, float y, int value) {
+        private SelectionIntersectionInfo(ChartLineDrawable line, float y, int value) {
             drawable = line;
 
             chartLine = line.getChartLine();
@@ -62,12 +61,11 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
 
     private float mRadius;
 
-    private List<ChartDrawable> mChartLines = new ArrayList<>();
+    private List<ChartLineDrawable> mChartLines = new ArrayList<>();
 
     private int mSelectedIndex = -1;
 
     private HorizontalMeasurementInfo mHorizontalMeasurementsInfo;
-    private int mMaxValue;
 
     private boolean mSelectionInfoInvalidated = true;
     private SelectionInfo mSelectionInfo = null;
@@ -130,18 +128,22 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
         invalidateSelf();
     }
 
-    public void setMaxValue(int maxValue) {
-        mMaxValue = maxValue;
+    public void onMaxValueChanged() {
+        mSelectionInfoInvalidated = true;
+
+        invalidateSelf();
+    }
+
+    public void addChartLineDrawable(ChartLineDrawable drawable) {
+        mChartLines.add(drawable);
 
         mSelectionInfoInvalidated = true;
 
         invalidateSelf();
     }
 
-    public void setChartLines(List<ChartDrawable> lines) {
-        mChartLines.clear();
-
-        mChartLines.addAll(lines);
+    public void removeChartLineDrawable(ChartLineDrawable drawable) {
+        mChartLines.remove(drawable);
 
         mSelectionInfoInvalidated = true;
 
@@ -195,7 +197,7 @@ public class SelectionLineDrawable extends Drawable implements HorizontalMeasure
 
         mSelectionInfo = new SelectionInfo(x, mHorizontalMeasurementsInfo.getTimestamps()[mSelectedIndex]);
 
-        for (ChartDrawable line: mChartLines) {
+        for (ChartLineDrawable line: mChartLines) {
             int lineIndex = mHorizontalMeasurementsInfo.getChartIndexForIndex(mSelectedIndex, line.getChartLine().getChart());
 
             if (lineIndex == -1) {

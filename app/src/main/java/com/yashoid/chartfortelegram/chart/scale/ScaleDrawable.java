@@ -1,4 +1,4 @@
-package com.yashoid.chartfortelegram;
+package com.yashoid.chartfortelegram.chart.scale;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -10,9 +10,16 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.animation.LinearInterpolator;
 
+import com.yashoid.chartfortelegram.Config;
+
+/**
+ * Honestly, it was not very difficult to make this one perfect. i.e. to make it
+ * not flicker when scale changes for multiple time.
+ * But it is 3am and I have very little free time. I hope I don't loose the competition over this!
+ */
 public class ScaleDrawable extends Drawable implements Drawable.Callback {
 
-    private static final long ANIMATION_DURATION = ChartView.ANIMATION_DURATION;
+    private static final long ANIMATION_DURATION = Config.ANIMATION_DURATION;
 
     private ScaleLineDrawable mDrawable;
     private ScaleLineDrawable mAnimatedDrawable = null;

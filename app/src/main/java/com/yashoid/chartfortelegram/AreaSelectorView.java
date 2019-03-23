@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,19 +64,17 @@ public class AreaSelectorView extends View {
     private void initialize(Context context, AttributeSet attrs, int defStyleAttr) {
         float density = getResources().getDisplayMetrics().density;
 
-        mTouchArea = density * 36;
+        mTouchArea = density * Config.AREA_SELECTOR_TOUCH_SIZE;
 
         mCoverPaint = new Paint();
-        mCoverPaint.setColor(0x99e6ebf0);
         mCoverPaint.setStyle(Paint.Style.FILL);
 
         mEdgePaint = new Paint(mCoverPaint);
-        mEdgePaint.setColor(0x30426382);
 
         mHorizontalEdgeWidth = density * 1f;
         mVerticalEdgeWidth = density * 4f;
 
-        setMinimumSelectedArea(7L * 24L * 60L * 60L * 1000L);
+        setMinimumSelectedArea(Config.MINIMUM_SELECTABLE_AREA_LENGTH);
 
         mGestureDetector = new GestureDetector(context, mOnGestureListener);
     }

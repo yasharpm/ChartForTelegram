@@ -6,8 +6,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.yashoid.chartfortelegram.ScaleLineDrawable;
-import com.yashoid.chartfortelegram.SelectionLineDrawable;
+import com.yashoid.chartfortelegram.chart.scale.ScaleLineDrawable;
+import com.yashoid.chartfortelegram.chart.SelectionLineDrawable;
 import com.yashoid.chartfortelegram.data.Chart;
 
 import java.text.SimpleDateFormat;
