@@ -137,6 +137,8 @@ public class MainChartView extends View implements HorizontalMeasurementInfo.OnH
             mCharts.put(chartLine.getChart(), lines);
 
             mHorizontalMeasurementInfo.addChart(chartLine.getChart());
+
+            mLegendDrawable.setTimestamps(mHorizontalMeasurementInfo.getTimestamps());
         }
 
         lines.add(chartLine);
@@ -205,6 +207,8 @@ public class MainChartView extends View implements HorizontalMeasurementInfo.OnH
             mCharts.remove(chartLine.getChart());
 
             mHorizontalMeasurementInfo.removeChart(chartLine.getChart());
+            
+            mLegendDrawable.setTimestamps(mHorizontalMeasurementInfo.getTimestamps());
         }
     }
 
