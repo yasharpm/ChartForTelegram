@@ -25,7 +25,7 @@ import java.util.List;
  *
  * Github profile : https://github.com/yasharpm
  * Project Github link : https://github.com/yasharpm/ChartForTelegram
- * 
+ *
  */
 public class MainActivity extends Activity implements AreaSelectorView.OnSelectedAreaChangedListener,
         SelectionLineDrawable.OnSelectionInfoChangedListener, ChartTracker.OnChartsChangedListener,
