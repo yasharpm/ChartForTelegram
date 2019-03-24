@@ -66,6 +66,11 @@ public class ScaleDrawable extends Drawable implements Drawable.Callback {
 
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                // This is to avoid a bug from Android 6 ( and 6- ?) that calls update once before calling animation start.
+                if (mAnimatedDrawable == null) {
+                    return;
+                }
+
                 int alpha = (int) (animation.getAnimatedFraction() * 255);
 
                 final int maxValue = (int) animation.getAnimatedValue();
