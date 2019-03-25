@@ -1,6 +1,6 @@
 # ChartForTelegram
 I participated in a Telegram conding contest. Here is the contest description by Telegram:
-
+```
 Telegram official coding competition for Android, iOS and JS developers starts tomorrow. 
 
 March 10-24, 125,000 USD in prizes.
@@ -18,13 +18,13 @@ Designs for the contest charts are attached below. We’ll distribute the 125,00
 Stay tuned for contest-related announcements in this channel.
 
 Good luck!
-
+```
 ## Given demo for app behaviour
 <img src="https://github.com/yasharpm/ChartForTelegram/raw/master/Charts.gif" width="400px"/>
 
 ## Android designs
 <img src="https://github.com/yasharpm/ChartForTelegram/raw/master/Android_Chart.png" width="400px"/>
-<img src="https://github.com/yasharpm/ChartForTelegram/raw/master/Android_Chart_Night.gif" width="400px"/>
+<img src="https://github.com/yasharpm/ChartForTelegram/raw/master/Android_Chart_Night.png" width="400px"/>
 
 ## Here is video from the created app
 <img src="https://github.com/yasharpm/ChartForTelegram/raw/master/app.gif" width="400px"/>
